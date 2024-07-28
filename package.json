@@ -1,0 +1,13 @@
+{
+  "name": "port-tester",
+  "version": "1.0.0",
+  "main": "server.js",
+  "dependencies": {
+    "netlify-lambda": "^2.0.0"
+  },
+  "scripts": {
+    "build": "netlify-lambda build functions"
+  },
+  "author": "",
+  "license": "ISC"
+}

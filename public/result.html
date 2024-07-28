@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Port Checker Result</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Comic Neue', cursive;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-4">Port Check Result</h1>
+        <p class="mb-2">IP Address: <strong>{{ ip }}</strong></p>
+        <p class="mb-2">Port: <strong>{{ port }}</strong></p>
+        <p class="mb-4">Port is <strong>{% if is_open %}open{% else %}closed{% endif %}</strong>.</p>
+        {% if not is_open %}
+        <p class="text-sm text-gray-600 mb-4">For the port test to be recognized properly, you must open the server for that port.</p>
+        {% endif %}
+        <a href="/" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Check another port</a>
+    </div>
+</body>
+</html>

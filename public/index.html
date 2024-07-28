@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP and Port Tester</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Comic Neue', cursive;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+        <form id="port-check-form">
+            <div class="mb-4">
+                <label for="port" class="block text-gray-700 text-sm font-bold mb-2">Test Port</label>
+                <input type="text" id="port" name="port" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter port" required>
+            </div>
+            <div class="mb-4">
+                <label for="ip" class="block text-gray-700 text-sm font-bold mb-2">Your IP</label>
+                <input type="text" id="ip" name="ip" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter IP address" value="" required>
+            </div>
+            <div class="flex justify-end">
+                <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                    Test
+                </button>
+            </div>
+        </form>
+        <div id="result" class="mt-4"></div>
+    </div>
+    <script>
+        document.getElementById('port-check-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const ip = document.getElementById('ip').value;
+            const port = document.getElementById('port').value;
+            fetch('/.netlify/functions/checkPort', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ip, port })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                if (data.isOpen) {
+                    resultDiv.innerHTML = `<p>Port is <strong>open</strong>.</p>`;
+                } else {
+                    resultDiv.innerHTML = `<p>Port is <strong>closed</strong>.</p>
+                                           <p>For the port test to be recognized properly, you must open the server for that port.</p>`;
+                }
+            });
+        });
+
+        // Get client's IP address and set it as default value
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('ip').value = data.ip;
+            });
+    </script>
+</body>
+</html>
