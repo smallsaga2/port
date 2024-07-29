@@ -1,7 +1,8 @@
 const net = require('net');
 
-exports.handler = async function(event, context) {
+exports.handler = async function(event) {
     const { ip, port } = JSON.parse(event.body);
+
     return new Promise((resolve) => {
         const socket = new net.Socket();
         socket.setTimeout(1000);

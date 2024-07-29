@@ -59,8 +59,8 @@
             });
         });
 
-        // Get client's IP address and set it as default value
-        fetch('https://api.ipify.org?format=json')
+        // Get client's IP address from Netlify function
+        fetch('/.netlify/functions/getClientIP')
             .then(response => response.json())
             .then(data => {
                 const ipField = document.getElementById('ip');
