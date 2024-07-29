@@ -12,7 +12,10 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen relative">
+    <div id="ip-display" class="absolute top-0 left-0 m-4 p-2 bg-white rounded shadow">
+        <p>Your IP: <span id="client-ip">Loading...</span></p>
+    </div>
     <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
         <form id="port-check-form">
             <div class="mb-4">
@@ -21,7 +24,7 @@
             </div>
             <div class="mb-4">
                 <label for="ip" class="block text-gray-700 text-sm font-bold mb-2">Your IP</label>
-                <input type="text" id="ip" name="ip" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter IP address" value="" required>
+                <input type="text" id="ip" name="ip" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter IP address" required>
             </div>
             <div class="flex justify-end">
                 <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
@@ -36,6 +39,7 @@
             event.preventDefault();
             const ip = document.getElementById('ip').value;
             const port = document.getElementById('port').value;
+
             fetch('/.netlify/functions/checkPort', {
                 method: 'POST',
                 headers: {
@@ -59,7 +63,11 @@
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
             .then(data => {
-                document.getElementById('ip').value = data.ip;
+                const ipField = document.getElementById('ip');
+                ipField.value = data.ip;
+                
+                const ipDisplay = document.getElementById('client-ip');
+                ipDisplay.textContent = data.ip;
             });
     </script>
 </body>
