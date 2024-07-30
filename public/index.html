@@ -5,38 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IP and Port Tester</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
         body {
-            font-family: 'Comic Neue', cursive;
+            font-family: 'Roboto', sans-serif;
+        }
+        .button-clicked {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen relative">
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
     <div id="ip-display" class="absolute top-0 left-0 m-4 p-2 bg-white rounded shadow">
-        <p>Your IP: <span id="client-ip">Loading...</span></p>
+        <p id="ip-label">Your IP: <span id="client-ip">Loading...</span></p>
     </div>
     <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <form id="port-check-form">
-            <div class="mb-4">
-                <label for="port" class="block text-gray-700 text-sm font-bold mb-2">Test Port</label>
-                <input type="text" id="port" name="port" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter port" required>
-            </div>
-            <div class="mb-4">
-                <label for="ip" class="block text-gray-700 text-sm font-bold mb-2">Your IP</label>
-                <input type="text" id="ip" name="ip" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter IP address" required>
-            </div>
-            <div class="flex justify-end">
-                <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-                    Test
-                </button>
-            </div>
-        </form>
-        <div id="result" class="mt-4"></div>
+        <div class="mb-4">
+            <label for="port" class="block text-gray-700 font-bold mb-2" id="port-label">Test Port</label>
+            <input type="text" id="port" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter port">
+        </div>
+        <div class="mb-4">
+            <label for="ip" class="block text-gray-700 font-bold mb-2" id="your-ip-label">Your IP</label>
+            <input type="text" id="ip" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter IP">
+        </div>
+        <div class="flex justify-end">
+            <button id="testButton" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Test</button>
+        </div>
+        <div id="result" class="mt-4 text-gray-700 font-bold"></div>
     </div>
-    <script>
-        document.getElementById('port-check-form').addEventListener('submit', function(event) {
-            event.preventDefault();
+    <div class="mt-6 flex space-x-4">
+        <button id="en-button" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">English</button>
+        <button id="ko-button" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">한국어</button>
+        <button id="ja-button" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">日本語</button>
+    </div>
+    <script type="module">
+        const translations = {
+            en: {
+                ipLabel: "Your IP",
+                portLabel: "Test Port",
+                yourIpLabel: "Your IP",
+                testButton: "Test",
+                portOpen: "Port is open.",
+                portClosed: "Port is closed.",
+                portTestInfo: "For the port test to be recognized properly, you must open the server for that port."
+            },
+            ko: {
+                ipLabel: "당신의 IP",
+                portLabel: "테스트 포트",
+                yourIpLabel: "당신의 IP",
+                testButton: "테스트",
+                portOpen: "포트가 열려 있습니다.",
+                portClosed: "포트가 닫혀 있습니다.",
+                portTestInfo: "포트 테스트를 제대로 인식하려면 해당 포트를 위한 서버를 열어야 합니다."
+            },
+            ja: {
+                ipLabel: "あなたのIP",
+                portLabel: "テストポート",
+                yourIpLabel: "あなたのIP",
+                testButton: "テスト",
+                portOpen: "ポートが開いています。",
+                portClosed: "ポートが閉じています。",
+                portTestInfo: "ポートテストが正しく認識されるには、そのポート用のサーバーを開く必要があります。"
+            }
+        };
+
+        let currentLang = 'en';
+
+        function setLanguage(lang) {
+            document.getElementById('ip-label').textContent = translations[lang].ipLabel + ": ";
+            document.getElementById('port-label').textContent = translations[lang].portLabel;
+            document.getElementById('your-ip-label').textContent = translations[lang].yourIpLabel;
+            document.getElementById('testButton').textContent = translations[lang].testButton;
+            currentLang = lang;
+        }
+
+        document.getElementById('testButton').addEventListener('click', function() {
+            this.classList.add('button-clicked');
+            setTimeout(() => {
+                this.classList.remove('button-clicked');
+            }, 200);
+            
             const ip = document.getElementById('ip').value;
             const port = document.getElementById('port').value;
 
@@ -51,16 +99,19 @@
             .then(data => {
                 const resultDiv = document.getElementById('result');
                 if (data.isOpen) {
-                    resultDiv.innerHTML = `<p>Port is <strong>open</strong>.</p>`;
+                    resultDiv.innerHTML = `<p>${translations[currentLang].portOpen}</p>`;
                 } else {
-                    resultDiv.innerHTML = `<p>Port is <strong>closed</strong>.</p>
-                                           <p>For the port test to be recognized properly, you must open the server for that port.</p>`;
+                    resultDiv.innerHTML = `<p>${translations[currentLang].portClosed}</p>
+                                           <p>${translations[currentLang].portTestInfo}</p>`;
                 }
             });
         });
 
-        // Get client's IP address from Netlify function
-        fetch('/.netlify/functions/getClientIP')
+        document.getElementById('en-button').addEventListener('click', () => setLanguage('en'));
+        document.getElementById('ko-button').addEventListener('click', () => setLanguage('ko'));
+        document.getElementById('ja-button').addEventListener('click', () => setLanguage('ja'));
+
+        fetch('/.netlify/functions/logIP')
             .then(response => response.json())
             .then(data => {
                 const ipField = document.getElementById('ip');
@@ -69,6 +120,9 @@
                 const ipDisplay = document.getElementById('client-ip');
                 ipDisplay.textContent = data.ip;
             });
+
+        // Set default language to English
+        setLanguage(currentLang);
     </script>
 </body>
 </html>
